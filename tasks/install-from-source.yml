@@ -33,6 +33,9 @@
   check_mode: no
   register: git_installed_version
 
+- debug:
+    var: git_installed_version.stdout.rc
+
 - name: Force git install if the version numbers do not match
   set_fact:
     git_reinstall_from_source: true
