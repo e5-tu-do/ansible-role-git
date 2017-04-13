@@ -34,7 +34,7 @@
   register: git_installed_version
 
 - debug:
-    var: git_installed_version.stdout.rc
+    var: git_installed_version.stdout
 
 - name: Force git install if the version numbers do not match
   set_fact:
