@@ -1,0 +1,6 @@
+---
+- name: unstow all git versions
+  command: chdir={{ stow_directories }} stow --delete git*
+
+- name: link latest git to stow
+  command: chdir={{ stow_directories }} stow "git_{{ git_version }}"

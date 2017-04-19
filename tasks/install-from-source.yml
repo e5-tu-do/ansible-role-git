@@ -1,4 +1,13 @@
 ---
+- name: Set git install path.
+  set_fact:
+    git_install_path: "{{ stow_directories }}/git_{{ git_version }}"
+
+- debug:
+    msg:
+      - "Requested version: {{ git_version }}"
+      - "Install path: {{ git_install_path }}"
+
 - name: Ensure git's dependencies are installed (RedHat).
   package: "name={{ item }} state=installed"
   with_items:
@@ -24,7 +33,7 @@
     - gcc
   when: ansible_os_family == 'Debian'
 
-- name: Get installed version
+- name: Get installed git version.
   command: >
     git --version
     warn=no
@@ -33,8 +42,18 @@
   check_mode: no
   register: git_installed_version
 
+- name: Get git path.
+  command: which git
+  register: git_path
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
 - debug:
     var: git_installed_version.stdout
+
+- debug:
+    var: git_path.stdout
 
 - name: Force git install if the version numbers do not match
   set_fact:
@@ -64,3 +83,16 @@
     - install
   when:  git_installed_version|failed or git_reinstall_from_source
   become: yes
+  notify:
+    - unstow all git versions
+    - link latest git to stow
+
+- name: Get git path again.
+  command: which git | readlink -f
+  register: git_path_again
+  changed_when: false
+  failed_when: false
+  check_mode: no
+
+- debug:
+    var: git_path_again.stdout
