@@ -84,15 +84,6 @@
   when:  git_installed_version|failed or git_reinstall_from_source
   become: yes
   notify:
+    - search for stowed gits
     - unstow all git versions
     - link latest git to stow
-
-- name: Get git path again.
-  command: which git | readlink -f
-  register: git_path_again
-  changed_when: false
-  failed_when: false
-  check_mode: no
-
-- debug:
-    var: git_path_again.stdout

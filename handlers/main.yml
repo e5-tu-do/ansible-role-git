@@ -1,6 +1,11 @@
 ---
+- name: search for stowed gits
+  command: ls {{ stow_directories }}
+  register: stowed_gits
+
 - name: unstow all git versions
-  command: chdir={{ stow_directories }} stow --delete git*
+  shell: chdir={{ stow_directories }} stow --delete git*
+  when: "'git' in stowed_gits.stdout"
 
 - name: link latest git to stow
-  command: chdir={{ stow_directories }} stow "git_{{ git_version }}"
+  shell: chdir={{ stow_directories }} stow "git_{{ git_version }}"
